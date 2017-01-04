@@ -15,7 +15,7 @@ public:
 	double speedX = 0;
 	double speedY = 0;
 	int direction = 0;
-	int facingDir = 0;
+	int facingDir = 1;
 
 	sf::Sprite sprite;
 

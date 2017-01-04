@@ -10,7 +10,7 @@ void projectile::update(int facingDirection) {
 
 	// 0 = Above, 1 = Below, 2 = Right, 3 = Left 
 
-	projectileSpeed = 5;
+	projectileSpeed = 7;
 	projectileSpeedX = 0;
 	projectileSpeedY = 0;
 

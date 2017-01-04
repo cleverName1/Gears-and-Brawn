@@ -25,7 +25,7 @@ void enemy::update(int time)
 	direction = time;
 
 	if (direction == 0) {
-		speedY = -1;
+		speedY = -0;
 	}
 	if (direction == 1 || direction == 2) {
 		speedX = -1;
@@ -33,7 +33,7 @@ void enemy::update(int time)
 		sprite.setTextureRect(sf::IntRect(animationCounter * 0, 0, 60, 60));
 	}
 	if (direction == 3 ) {
-		speedY = 1;
+		speedY = 0;
 
 	}
 	if (direction == 4 || direction == 5) {

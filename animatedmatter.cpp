@@ -18,7 +18,7 @@ void animatedmatter::update()
 		animationCounter = 0;
 	}
 
-	sprite.setTextureRect(sf::IntRect(animationCounter * 140, 0, 140, 140));
+	sprite.setTextureRect(sf::IntRect(0 * 140, 0, 140, 140));
 
 	// frameCounter används för att visa animationen i rätt hastighet, måste modifieras om framerate ändras.
 	frameCounter++;

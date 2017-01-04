@@ -5,7 +5,7 @@
 player::player()
 {
 	sprite.setOrigin(0, 0);
-	sprite.setPosition(100, 100);
+	sprite.setPosition(100, 250);
 	sprite.setTextureRect(sf::IntRect(animationCounter * 0, 0, 60, 60));
 }
 
@@ -164,8 +164,8 @@ void player::movement() {
 
 
 int player::facingDirection() {
-	if (!facingDir) { 
-		facingDir = 0; 
+	if (facingDir != 0 && facingDir != 1 && facingDir != 2 && facingDir != 3) {
+		facingDir = 1; 
 	};
 	return this->facingDir;
 }
