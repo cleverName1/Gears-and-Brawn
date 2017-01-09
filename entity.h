@@ -7,6 +7,7 @@ using namespace std;
 class entity
 {
 public:
+	sf::RectangleShape hitRect;
 	sf::Sprite sprite;
 	float playerX = 0;
 	float playerY = 0;
@@ -17,7 +18,7 @@ public:
 
 
 	entity();
-	float collision(float playerX, float playerY, float playerWidth, float playerHeight);
+	float * collision(float playerX, float playerY, float playerWidth, float playerHeight);
 
 	~entity();
 };

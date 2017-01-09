@@ -6,6 +6,8 @@ enemy::enemy()
 {
 	sprite.setOrigin(0, 0);
 	sprite.setTextureRect(sf::IntRect(animationCounter * 0, 0, 60, 60));
+	hitRect.setSize(sf::Vector2f(40, 40));
+	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 10, sprite.getPosition().y + 10));
 }
 
 int enemy::getHealth() {
@@ -17,7 +19,7 @@ int enemy::getHealth() {
 
 void enemy::update(int time)
 {
-
+	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 10, sprite.getPosition().y + 10));
 	// 0 = Above, 1 = Below, 2 = Right, 4 = Left 
 
 	speedY = 0;

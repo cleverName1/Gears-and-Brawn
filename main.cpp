@@ -8,12 +8,17 @@
 #include "projectile.h"
 #include "conversation.h"
 #include <vector>
+#include "world.h"
 using namespace std;
 
 
 
 
 int main() {
+
+	// Used to measure fps
+	int framesPassed = 0;
+	sf::Clock fpsClock;
 
 	// Used to limit the time of the red flash when an enemy is hit by a projectile
 	sf::Clock oneHundredMillisecondClock;
@@ -29,7 +34,6 @@ int main() {
 
 	// Used to erase projectiles
 	sf::Clock fiveSecondClock;
-
 	int counter1 = 0;
 	int counter2 = 0;
 	int counter3 = 0;
@@ -43,18 +47,13 @@ int main() {
 
 
 
-	/*
-	float windowWidth = Player1.sprite.getGlobalBounds().width;
-	float windowHeight = Player1.sprite.getGlobalBounds().height;
-	float windowX = Player1.sprite.getPosition().x;
-	float windowY = window(sf::Vector2f(getCenter);
-	*/
-
 	// Sätter max-framerate
 	window.setFramerateLimit(100);
 
+	
 
-	// ------------------------------------------------------------------------------- Laddar och sätter texturer
+
+	// ------------------------------------------------------------------------------- Load and set textures
 	sf::Texture playerTexture;
 	if (!playerTexture.loadFromFile("sin_spritesheet_60px.png"))
 	{
@@ -67,47 +66,10 @@ int main() {
 		std::cout << "fancySquirrel_spritesheet_60px.png failed to load. /n";
 	}
 
-
-	sf::Texture woodBoxTexture;
-	if (!woodBoxTexture.loadFromFile("woodBox.png"))
+	sf::Texture snowMatterTexture;
+	if (!snowMatterTexture.loadFromFile("snowmatter spritesheet.png"))
 	{
-		std::cout << "woodBox.png failed to load. /n";
-	}
-
-	sf::Texture stoneWallTexture;
-	if (!stoneWallTexture.loadFromFile("stoneWall.png"))
-	{
-		std::cout << "stoneWall.png failed to load. /n";
-	}
-
-	sf::Texture stoneWallTextureVertical;
-	if (!stoneWallTextureVertical.loadFromFile("stoneWall_vertical.png"))
-	{
-		std::cout << "stoneWall_vertical.png failed to load. /n";
-	}
-
-	sf::Texture grassTexture;
-	if (!grassTexture.loadFromFile("grass1.png"))
-	{
-		std::cout << "grass1.png failed to load. /n";
-	}
-
-	sf::Texture waterTexture;
-	if (!waterTexture.loadFromFile("water2.png"))
-	{
-		std::cout << "water1.png failed to load. /n";
-	}
-
-	sf::Texture waterEdgeUpTexture;
-	if (!waterEdgeUpTexture.loadFromFile("wateredgeup1.png"))
-	{
-		std::cout << "wateredgeup1.png failed to load. /n";
-	}
-
-	sf::Texture bottomBorderTexture;
-	if (!bottomBorderTexture.loadFromFile("bottomImageBranches.png"))
-	{
-		std::cout << "bottomImageBranches.png failed to load. /n";
+		std::cout << "snowmatter spritesheet.png failed to load. /n";
 	}
 
 	sf::Texture treeWindTexture;
@@ -120,6 +82,12 @@ int main() {
 	if (!rockProjectileTexture.loadFromFile("rock_projectile.png"))
 	{
 		std::cout << "rock_projectile.png failed to load. /n";
+	}
+
+	sf::Texture tileTexture;
+	if (!tileTexture.loadFromFile("tiles_spritesheet.png"))
+	{
+		std::cout << "tiles_spritesheet.png failed to load. /n";
 	}
 
 
@@ -136,13 +104,15 @@ int main() {
 	vector<matter>::const_iterator iter;
 	vector<matter> matterArray;
 
-	// matter objects
-	class matter WoodBox;
-	class matter StoneWall;
-	class matter StoneWallVertical;
-	class matter Water;
-	class matter WaterEdgeUp;
-	class matter BottomImage;
+	// matter objects, passed to the function in order is: Width, Height, X, Y of the desired hitBox in relation to the sprite.
+	class matter snowMatter(70, 50, 20, 50);
+
+	// World Array
+	vector<world>::const_iterator iter8;
+	vector<world> worldArray;
+
+	// World Object
+    class world tile(30, 30, 0, 0);
 
 	// animatedmatter array
 	vector<animatedmatter>::const_iterator iter4;
@@ -152,12 +122,17 @@ int main() {
 
 	class animatedmatter TreeWind;
 
+	/*
 	// tile array
 	vector<tile>::const_iterator iter2;
 	vector<tile> tileArray;
 
 	// tile objects
 	class tile Grass;
+	class tile Snow;
+	class tile mountain;
+	class tile background;
+	*/
 
 	// enemy array
 	vector<enemy>::const_iterator iter3;
@@ -182,16 +157,13 @@ int main() {
 	vector<int> projectileDirectionsArray;
 
 
-	WoodBox.sprite.setTexture(woodBoxTexture);
-	StoneWall.sprite.setTexture(stoneWallTexture);
-	StoneWallVertical.sprite.setTexture(stoneWallTextureVertical);
-	Grass.sprite.setTexture(grassTexture);
-	Water.sprite.setTexture(waterTexture);
-	WaterEdgeUp.sprite.setTexture(waterEdgeUpTexture);
-	BottomImage.sprite.setTexture(bottomBorderTexture);
+	
 	Enemy.sprite.setTexture(enemyTexture);
 	TreeWind.sprite.setTexture(treeWindTexture);
 	ProjectileRock.sprite.setTexture(rockProjectileTexture);
+	snowMatter.sprite.setTexture(snowMatterTexture);
+	tile.sprite.setTexture(tileTexture);
+
 
 
 
@@ -204,14 +176,21 @@ int main() {
 		if (firstLoop == true) {
 
 
-			//WoodBox.sprite.setPosition(300, 340);
-			//matterArray.push_back(WoodBox);
+			snowMatter.sprite.setPosition(400, 400);
+			snowMatter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
+			matterArray.push_back(snowMatter);
 
 
-			Enemy.sprite.setPosition(225, 325);
+			snowMatter.sprite.setPosition(400, 534);
+			snowMatter.sprite.setTextureRect(sf::IntRect(100, 0, 100, 100));
+			matterArray.push_back(snowMatter);
+
+			Enemy.sprite.setPosition(325, 725);
 			enemyArray.push_back(Enemy);
 			enemyHealthArray.push_back(Enemy.getHealth());
 
+
+			/*
 			TreeWind.sprite.setPosition(0, 0);
 			TreeWind.update();
 			animatedmatterArray.push_back(TreeWind);
@@ -261,96 +240,119 @@ int main() {
 			animatedmatterArray.push_back(TreeWind);
 
 
-
-
-
-
-			/*
-			StoneWall.sprite.setPosition(0, 0);
-			matterArray.push_back(StoneWall);
-			StoneWall.sprite.setPosition(480, 0);
-			matterArray.push_back(StoneWall);
-			StoneWall.sprite.setPosition(940, 0);
-			matterArray.push_back(StoneWall);
-
-
-			StoneWall.sprite.setPosition(0, 740);
-			matterArray.push_back(StoneWall);
-			StoneWall.sprite.setPosition(480, 740);
-			matterArray.push_back(StoneWall);
-			StoneWall.sprite.setPosition(940, 740);
-			matterArray.push_back(StoneWall);
-
-
-
-			StoneWallVertical.sprite.setPosition(0, 60);
-			matterArray.push_back(StoneWallVertical);
-			StoneWallVertical.sprite.setPosition(0, 540);
-			matterArray.push_back(StoneWallVertical);
-			StoneWallVertical.sprite.setPosition(1220, 60);
-			matterArray.push_back(StoneWallVertical);
-			StoneWallVertical.sprite.setPosition(1220, 540);
-			matterArray.push_back(StoneWallVertical);
 			*/
 
-			// Testar att skapa en stenprojektil i världen
-			//ProjectileRock.sprite.setPosition(420, 540);
-			//projectileArray.push_back(ProjectileRock);
 
 
-			//BottomImage.sprite.setPosition(0, 740);
-			//matterArray.push_back(BottomImage);
-
+			
 
 			// Variables for for-loop drawing
 			int lastValueX;
 			int lastValueY;
 
 
+			
+
+
 			/*
-			// Paints water
-			int lastValueX = 690;
-			int lastValueY = 300;
-			bool firstRow = true;
-			for (int i = 0; i != 32; i++)
+			// Paint background
+			lastValueX = 0;
+			lastValueY = 0;
+			for (int i = 0; i != 15; i++)
 			{
 
-			if (firstRow == true) {
-			WaterEdgeUp.sprite.setPosition(lastValueX, lastValueY);
-			matterArray.push_back(WaterEdgeUp);
-			}
-			else {
-			Water.sprite.setPosition(lastValueX, lastValueY);
-			matterArray.push_back(Water);
-
-			}
-
-			lastValueX += 30;
-			if (lastValueX == 900) {
-			lastValueY += 30;
-			lastValueX = 600;
-			firstRow = false;
-			}
+				background.sprite.setPosition(lastValueX, lastValueY);
+				tileArray.push_back(background);
+				lastValueX += 800;
+				if (lastValueX >= 700) {
+					lastValueY += 800;
+					lastValueX = 0;
+				}
 			}
 			*/
 
-			// Paint grass
-			lastValueX = -900;
-			lastValueY = -1200;
-			for (int i = 0; i != 6499; i++)
+			
+
+
+
+			//------------------------------------------------------------------------------------------------------------------------------------------------------ Building the tiles
+
+
+
+            int map[900] = { 
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
+				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
+				1, 1, 1, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 13, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 12, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 12, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 11, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
+				1, 1, 1, 9, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8 ,1, 1, 1,
+				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
+				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
+				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1
+
+			};
+
+            lastValueX = 0;
+            lastValueY = 0;
+
+			for (int i = 0; i != 900; i++)
+
 			{
 
-				Grass.sprite.setPosition(lastValueX, lastValueY);
-				tileArray.push_back(Grass);
-				lastValueX += 30;
-				if (lastValueX >= 1100) {
-					lastValueY += 30;
-					lastValueX = -900;
+
+
+				tile.sprite.setTextureRect(sf::IntRect(map[i] * 30, 0, 30, 30));
+				
+
+					tile.sprite.setPosition(lastValueX, lastValueY);
+					if (map[i] == 0 || map[i] == 1) {
+						tile.setTileIsWalkable(true);
+					}
+					if (map[i] == 2 || map[i] == 3 || map[i] == 4 || map[i] == 5 || map[i] == 6 || map[i] == 7 || map[i] == 8 || map[i] == 9 || map[i] == 10 || map[i] == 11 || map[i] == 12 || map[i] == 13) {
+						tile.setTileIsWalkable(false);
+					}
+					worldArray.push_back(tile);
+
+
+					lastValueX += 30;
+					if (lastValueX >= 900) {
+						lastValueY += 30;
+						lastValueX = 0;
+					
 				}
+
 			}
 
 
 
+
+
+
+
+			//------------------------------------------------------------------------------------------------------------------------------------------------------
+	
+	
 
 
 
@@ -374,14 +376,22 @@ int main() {
 		}
 
 
-		float playerWidth = Player1.sprite.getGlobalBounds().width;
-		float playerHeight = Player1.sprite.getGlobalBounds().height;
-		float playerX = Player1.sprite.getPosition().x;
-		float playerY = Player1.sprite.getPosition().y;
+		// These variables are used for collision detection with the player.
+		float playerWidth = Player1.hitRect.getGlobalBounds().width;
+		float playerHeight = Player1.hitRect.getGlobalBounds().height;
+		float playerX = Player1.hitRect.getPosition().x;
+		float playerY = Player1.hitRect.getPosition().y;
 
 
+		framesPassed++;
+		if (fpsClock.getElapsedTime().asSeconds() >= 1) {
+			std::cout << framesPassed << endl;
+			framesPassed = 0;
+			fpsClock.restart();
+		}
 
-		// Create box with space
+
+		// Create projectile with space
 		if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space)) {
 			if (oneSecondClock.getElapsedTime().asSeconds() >= 1) {
 				ProjectileRock.sprite.setPosition(playerX + 20, playerY + 20);
@@ -399,34 +409,39 @@ int main() {
 		window.clear();
 
 
-
-		// -------------------------------------------------------------------------------------------------------------- DRAW + COLLISION tile
+		// -------------------------------------------------------------------------------------------------------------- DRAW + COLLISION world
 		// Draw tile to the screen, iter is set to the begining of the array
 		counter1 = 0;
-		for (iter2 = tileArray.begin(); iter2 != tileArray.end(); iter2++)
+		for (iter8 = worldArray.begin(); iter8 != worldArray.end(); iter8++)
 		{
+			worldArray[counter1].update(worldArray[counter1].sprite.getPosition().x, worldArray[counter1].sprite.getPosition().y);
 
-			window.draw(tileArray[counter1].sprite);
+			window.draw(worldArray[counter1].sprite);
+			counter1++;
+		}
+		
+
+			
+			// Check collision with worldArray, iter is set to the begining of the array
+			counter1 = 0;
+		for (iter8 = worldArray.begin(); iter8 != worldArray.end(); iter8++)
+		{
+			if (Player1.hitRect.getGlobalBounds().intersects(worldArray[counter1].hitRect.getGlobalBounds()))
+			{
+				if (worldArray[counter1].tileIsWalkable() == false) {
+					float direction1 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+					float direction2 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+					float direction3 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+					float direction4 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+					Player1.collision(direction1, direction2, direction3, direction4);
+					//std::cout << direction1 << " | " << direction2 << " | " << direction3 << " | " << direction4 << " | " << endl;					
+				}
+			}
 			counter1++;
 		}
 
-
-		/*
-		// Check collision with tileArray, iter is set to the begining of the array
-		counter1 = 0;
-		for (iter2 = tileArray.begin(); iter2 != tileArray.end(); iter2++)
-		{
-
-		if (Player1.sprite.getGlobalBounds().intersects(tileArray[counter1].sprite.getGlobalBounds()))
-		{
-		std::cout << "Colliding with tile\n";
-		Player1.collision(tileArray[counter1].collision(playerX, playerY, playerWidth, playerHeight));
-		}
-		counter1++;
-		}
-
-		*/
-		// ---------------------------------------------------------------------------------------------------------------
+			
+			// ---------------------------------------------------------------------------------------------------------------
 
 
 		// -------------------------------------------------------------------------------------------------------------- DRAW + COLLISION matter
@@ -434,7 +449,7 @@ int main() {
 		counter1 = 0;
 		for (iter = matterArray.begin(); iter != matterArray.end(); iter++)
 		{
-
+			matterArray[counter1].update(matterArray[counter1].sprite.getPosition().x, matterArray[counter1].sprite.getPosition().y);
 			window.draw(matterArray[counter1].sprite);
 			counter1++;
 		}
@@ -445,9 +460,13 @@ int main() {
 		for (iter = matterArray.begin(); iter != matterArray.end(); iter++)
 		{
 			// Check if player is colliding with objects from the matterArray.
-			if (Player1.sprite.getGlobalBounds().intersects(matterArray[counter1].sprite.getGlobalBounds()))
+			if (Player1.hitRect.getGlobalBounds().intersects(matterArray[counter1].hitRect.getGlobalBounds()))
 			{
-				Player1.collision(matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight));
+				float direction1 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+				float direction2 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+				float direction3 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+				float direction4 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+				Player1.collision(direction1, direction2, direction3, direction4);
 			}
 
 			counter2 = 0;
@@ -455,7 +474,7 @@ int main() {
 			for (iter5 = projectileArray.begin(); iter5 != projectileArray.end(); iter5++)
 			{
 				// If a member of projectileArray intersects a member of matterArray
-				if (projectileArray[counter2].sprite.getGlobalBounds().intersects(matterArray[counter1].sprite.getGlobalBounds()))
+				if (projectileArray[counter2].sprite.getGlobalBounds().intersects(matterArray[counter1].hitRect.getGlobalBounds()))
 				{
 					if (projectileDirectionsArray.at(counter2) != 5) {
 						// Set the projectile to a direction that equals stop
@@ -555,7 +574,7 @@ int main() {
 				for (iter5 = projectileArray.begin(); iter5 != projectileArray.end(); iter5++)
 				{
 					// If a member of projectileArray intersects a member of enemyArray
-					if (projectileArray[counter2].sprite.getGlobalBounds().intersects(enemyArray[counter1].sprite.getGlobalBounds()))
+					if (projectileArray[counter2].sprite.getGlobalBounds().intersects(enemyArray[counter1].hitRect.getGlobalBounds()))
 					{
 						// Cycle though the enemyHealthArray for every member of projectileArray
 						for (iter7 = enemyHealthArray.begin(); iter7 != enemyHealthArray.end(); iter7++)
@@ -635,9 +654,13 @@ int main() {
 		for (iter4 = animatedmatterArray.begin(); iter4 != animatedmatterArray.end(); iter4++)
 		{
 
-			if (Player1.sprite.getGlobalBounds().intersects(animatedmatterArray[counter1].sprite.getGlobalBounds()))
+			if (Player1.hitRect.getGlobalBounds().intersects(animatedmatterArray[counter1].hitRect.getGlobalBounds()))
 			{
-				Player1.collision(animatedmatterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight));
+				float direction1 = animatedmatterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+				float direction2 = animatedmatterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+				float direction3 = animatedmatterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+				float direction4 = animatedmatterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+				Player1.collision(direction1, direction2, direction3, direction4);
 			}
 
 
@@ -646,7 +669,7 @@ int main() {
 			for (iter5 = projectileArray.begin(); iter5 != projectileArray.end(); iter5++)
 			{
 				// If a member of projectileArray intersects a member of matterArray
-				if (projectileArray[counter2].sprite.getGlobalBounds().intersects(animatedmatterArray[counter1].sprite.getGlobalBounds()))
+				if (projectileArray[counter2].sprite.getGlobalBounds().intersects(animatedmatterArray[counter1].hitRect.getGlobalBounds()))
 				{
 					if (projectileDirectionsArray.at(counter2) != 5) {
 						// Set the projectile to a direction that equals stop
@@ -715,6 +738,8 @@ int main() {
 			sixSecondClock.restart();
 		}
 
+
+
 		// Update player
 		Player1.update();
 
@@ -747,16 +772,11 @@ int main() {
 
 		window.setView(view);
 		window.display();
+
+
+
+
 	}
 
 }
 
-// WAS WORKING HERE WITH MAKING THE CONVERSATIONWINDOW AT THE PLAYER LOCATION
-/*
-void startConversation(float playerX, float playerY, sf::RenderWindow &window) {
-	std::cout << "E was pressed \n";
-	sf::RectangleShape conversationWindow(sf::Vector2f(playerX, playerY));
-	conversationWindow.setSize(sf::Vector2f(400, 200));
-	window.draw(conversationWindow);
-}
-*/

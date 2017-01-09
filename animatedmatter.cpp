@@ -5,6 +5,9 @@
 animatedmatter::animatedmatter()
 {
 	sprite.setOrigin(0, 0);
+	hitRect.setSize(sf::Vector2f(50, 120));
+	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 50, sprite.getPosition().y + 10));
+
 }
 
 void animatedmatter::setTextureRect() {
@@ -13,6 +16,8 @@ void animatedmatter::setTextureRect() {
 
 void animatedmatter::update()
 {
+
+	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 45, sprite.getPosition().y + 20));
 
 	if (animationCounter > 8) {
 		animationCounter = 0;

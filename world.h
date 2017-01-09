@@ -4,17 +4,19 @@
 #include "entity.h"
 using namespace std;
 
-class matter: public entity
+class world: public entity
 {
 public:
 	float hitboxX2 = 0;
 	float hitboxY2 = 0;
 
+	bool walkable;
+	world(float hitboxWidth, float hitboxHeight, float hitboxX, float hitboxY);
 
-
-	matter(float hitboxWidth, float hitboxHeight, float hitboxX, float hitboxY);
+	void setTileIsWalkable(bool playerCanWalkHere);
+	bool tileIsWalkable();
 	void update(float hitboxX, float hitboxY);
 
-	~matter();
+	~world();
 };
 

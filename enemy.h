@@ -8,6 +8,8 @@ using namespace std;
 class enemy: public entity
 {
 public:
+
+
 	int frameCounter = 1;
 	int animationCounter = 0;
 	int attackDamage = 3;
