@@ -30,6 +30,7 @@ public:
 	void movement();
 	int facingDirection();
 	void collision(int direction1, int direction2, int direction3, int direction4);
+	void setPos(float setPosX, float setPosY);
 
 	~player();
 };

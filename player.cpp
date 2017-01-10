@@ -5,7 +5,7 @@
 player::player()
 {
 	sprite.setOrigin(0, 0);
-	sprite.setPosition(500, 130);
+	sprite.setPosition(0, 0);
 	sprite.setTextureRect(sf::IntRect(animationCounter * 0, 0, 60, 60));
 	hitRect.setSize(sf::Vector2f(30, 40));
 	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 10, sprite.getPosition().y + 10));
@@ -188,6 +188,10 @@ int player::facingDirection() {
 		facingDir = 1; 
 	};
 	return this->facingDir;
+}
+
+void player::setPos(float setPosX, float setPosY) {
+	sprite.setPosition(setPosX, setPosY);
 }
 
 

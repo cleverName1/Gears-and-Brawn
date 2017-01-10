@@ -1,14 +1,15 @@
 #pragma once
 #include <iostream>
 #include "SFML/Graphics.hpp"
-#include "entity.h"
 using namespace std;
 
-class tile: public entity
+class tile
 {
 public:
+	sf::Sprite sprite;
+
+
 	tile();
-	void rotate90();
 
 	~tile();
 };

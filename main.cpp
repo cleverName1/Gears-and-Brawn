@@ -9,12 +9,50 @@
 #include "conversation.h"
 #include <vector>
 #include "world.h"
+#include <fstream>
+#include <string>
 using namespace std;
 
 
 
 
 int main() {
+
+	string levelDataToLoad = "levels/level1/level_data.txt";
+	string levelTilesToLoad = "levels/level1/level_tiles.txt";
+	int counter1 = 0;
+	int counter2 = 0;
+	int counter3 = 0;
+	bool firstLoop = true;
+	bool conversationActive = false;
+
+	// ------------------------------------------------------------------------------------------------- Load desired level
+	// Tiles are loaded closer to function further down in document
+
+
+	string levelSpritesheet;
+	float setPlayerStartPosX;
+	float setPlayerStartPosY;
+	int mapWidth;
+
+	// --------------------------------------------------- Load data
+
+	// initialize and open the data file
+	ifstream level_data;
+	level_data.open(levelDataToLoad);
+
+	// Handle error
+	if (level_data.fail()) {
+		cerr << levelDataToLoad;
+		exit(1);
+	}
+
+	// Set level variables
+	level_data >> levelSpritesheet >> setPlayerStartPosX >> setPlayerStartPosY >> mapWidth;
+
+	// -------------------------------------------------------------------------------------------------------------------------
+
+
 
 	// Used to measure fps
 	int framesPassed = 0;
@@ -34,16 +72,13 @@ int main() {
 
 	// Used to erase projectiles
 	sf::Clock fiveSecondClock;
-	int counter1 = 0;
-	int counter2 = 0;
-	int counter3 = 0;
-	bool firstLoop = true;
-	bool conversationActive = false;
+
+
 
 
 
 	sf::RenderWindow window(sf::VideoMode(1280, 800), "Gears and Brawn", sf::Style::Titlebar | sf::Style::Close);
-	sf::View view(sf::FloatRect(0, 0, 800, 500));
+	sf::View view(sf::FloatRect(0, 0, 2000, 1500));
 
 
 
@@ -55,39 +90,39 @@ int main() {
 
 	// ------------------------------------------------------------------------------- Load and set textures
 	sf::Texture playerTexture;
-	if (!playerTexture.loadFromFile("sin_spritesheet_60px.png"))
+	if (!playerTexture.loadFromFile("images/sin_spritesheet_60px.png"))
 	{
-		std::cout << "sin_spritesheet_60px.png failed to load. /n";
+		std::cout << "images/sin_spritesheet_60px.png failed to load. /n";
 	}
 
 	sf::Texture enemyTexture;
-	if (!enemyTexture.loadFromFile("fancySquirrel_spritesheet_60px.png"))
+	if (!enemyTexture.loadFromFile("images/fancySquirrel_spritesheet_60px.png"))
 	{
-		std::cout << "fancySquirrel_spritesheet_60px.png failed to load. /n";
+		std::cout << "images/fancySquirrel_spritesheet_60px.png failed to load. /n";
 	}
 
 	sf::Texture snowMatterTexture;
-	if (!snowMatterTexture.loadFromFile("snowmatter spritesheet.png"))
+	if (!snowMatterTexture.loadFromFile("images/snowmatter spritesheet.png"))
 	{
-		std::cout << "snowmatter spritesheet.png failed to load. /n";
+		std::cout << "images/snowmatter spritesheet.png failed to load. /n";
 	}
 
 	sf::Texture treeWindTexture;
-	if (!treeWindTexture.loadFromFile("treeWind_spritesheet_1260x140px.png"))
+	if (!treeWindTexture.loadFromFile("images/treeWind_spritesheet_1260x140px.png"))
 	{
-		std::cout << "treeWind_spritesheet_1260x140px.png failed to load. /n";
+		std::cout << "images/treeWind_spritesheet_1260x140px.png failed to load. /n";
 	}
 
 	sf::Texture rockProjectileTexture;
-	if (!rockProjectileTexture.loadFromFile("rock_projectile.png"))
+	if (!rockProjectileTexture.loadFromFile("images/rock_projectile.png"))
 	{
-		std::cout << "rock_projectile.png failed to load. /n";
+		std::cout << "images/rock_projectile.png failed to load. /n";
 	}
 
 	sf::Texture tileTexture;
-	if (!tileTexture.loadFromFile("tiles_spritesheet.png"))
+	if (!tileTexture.loadFromFile(levelSpritesheet))
 	{
-		std::cout << "tiles_spritesheet.png failed to load. /n";
+		std::cout << levelSpritesheet << "failed to load. /n";
 	}
 
 
@@ -96,6 +131,11 @@ int main() {
 
 	class player Player1;
 	Player1.sprite.setTexture(playerTexture);
+
+
+
+	// Set the players starting position, variables set in level_data.txt
+	Player1.setPos(setPlayerStartPosX, setPlayerStartPosY);
 
 	class conversation Conversation;
 
@@ -112,27 +152,14 @@ int main() {
 	vector<world> worldArray;
 
 	// World Object
-    class world tile(30, 30, 0, 0);
+    class world tile(300, 300, 0, 0);
 
 	// animatedmatter array
 	vector<animatedmatter>::const_iterator iter4;
 	vector<animatedmatter> animatedmatterArray;
 
 	// animatedmatter objects
-
 	class animatedmatter TreeWind;
-
-	/*
-	// tile array
-	vector<tile>::const_iterator iter2;
-	vector<tile> tileArray;
-
-	// tile objects
-	class tile Grass;
-	class tile Snow;
-	class tile mountain;
-	class tile background;
-	*/
 
 	// enemy array
 	vector<enemy>::const_iterator iter3;
@@ -245,106 +272,54 @@ int main() {
 
 
 			
+			// --------------------------------------------------- Load tiles
 
-			// Variables for for-loop drawing
-			int lastValueX;
-			int lastValueY;
+			// Initialize and open the tiles file
+			ifstream level_tiles;
+			level_tiles.open(levelTilesToLoad);
 
-
-			
-
-
-			/*
-			// Paint background
-			lastValueX = 0;
-			lastValueY = 0;
-			for (int i = 0; i != 15; i++)
-			{
-
-				background.sprite.setPosition(lastValueX, lastValueY);
-				tileArray.push_back(background);
-				lastValueX += 800;
-				if (lastValueX >= 700) {
-					lastValueY += 800;
-					lastValueX = 0;
-				}
+			// Handle error
+			if (level_tiles.fail()) {
+				cerr << levelTilesToLoad;
+				exit(1);
 			}
-			*/
-
-			
 
 
 
 			//------------------------------------------------------------------------------------------------------------------------------------------------------ Building the tiles
 
-
-
-            int map[900] = { 
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
-				1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
-				1, 1, 1, 6, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 7 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 13, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 12, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 10, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 12, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 5, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 4, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 11, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 10, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 5 ,1, 1, 1,
-				1, 1, 1, 9, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 8 ,1, 1, 1,
-				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
-				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1,
-				1, 1, 1, 1, 1, 1 ,1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 ,1, 1, 1
-
-			};
-
-            lastValueX = 0;
-            lastValueY = 0;
-
-			for (int i = 0; i != 900; i++)
+			// Set map array to correct tiles based on information from the level_data file.
+			counter1 = 0;
+			int lastValueX = 0;
+			int lastValueY = 0;
+			int value;
+			while (!level_tiles.eof())
 
 			{
+				level_tiles >> value;
+				// Tiles are set to 300 x 300 px
+				tile.sprite.setTextureRect(sf::IntRect(value * 300, 0, 300, 300));
+				tile.sprite.setPosition(lastValueX, lastValueY);
 
-
-
-				tile.sprite.setTextureRect(sf::IntRect(map[i] * 30, 0, 30, 30));
-				
-
-					tile.sprite.setPosition(lastValueX, lastValueY);
-					if (map[i] == 0 || map[i] == 1) {
-						tile.setTileIsWalkable(true);
-					}
-					if (map[i] == 2 || map[i] == 3 || map[i] == 4 || map[i] == 5 || map[i] == 6 || map[i] == 7 || map[i] == 8 || map[i] == 9 || map[i] == 10 || map[i] == 11 || map[i] == 12 || map[i] == 13) {
-						tile.setTileIsWalkable(false);
-					}
-					worldArray.push_back(tile);
-
-
-					lastValueX += 30;
-					if (lastValueX >= 900) {
-						lastValueY += 30;
-						lastValueX = 0;
-					
+				if (value == 9) {
+					tile.setTileIsWalkable(true);
 				}
+				if (value == 1 || value == 2 || value == 3 || value == 4 || value == 5 || value == 6 || value == 7 || value == 8) {
+					tile.setTileIsWalkable(false);
+				}
+				worldArray.push_back(tile);
 
+
+				lastValueX += 300;
+				if (lastValueX >= mapWidth) {
+					lastValueY += 300;
+					lastValueX = 0;
+				}
+				counter1++;
 			}
 
-
+			// Close the file
+			level_tiles.close();
 
 
 
@@ -382,10 +357,10 @@ int main() {
 		float playerX = Player1.hitRect.getPosition().x;
 		float playerY = Player1.hitRect.getPosition().y;
 
-
+		// --------------------------------------------------------------------------------------------------------------------------------------------------------------- FPS 
 		framesPassed++;
 		if (fpsClock.getElapsedTime().asSeconds() >= 1) {
-			std::cout << framesPassed << endl;
+			//std::cout << framesPassed << endl;
 			framesPassed = 0;
 			fpsClock.restart();
 		}

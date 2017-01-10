@@ -9,6 +9,7 @@ class world: public entity
 public:
 	float hitboxX2 = 0;
 	float hitboxY2 = 0;
+	int type;
 
 	bool walkable;
 	world(float hitboxWidth, float hitboxHeight, float hitboxX, float hitboxY);
