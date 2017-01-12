@@ -18,6 +18,9 @@ using namespace std;
 
 int main() {
 
+
+	string levelMatterToLoad = "levels/level1/level_matter.txt";
+	string levelEnemiesToLoad = "levels/level1/level_enemies.txt";
 	string levelDataToLoad = "levels/level1/level_data.txt";
 	string levelTilesToLoad = "levels/level1/level_tiles.txt";
 	int counter1 = 0;
@@ -26,8 +29,19 @@ int main() {
 	bool firstLoop = true;
 	bool conversationActive = false;
 
+	// Used when reading from files
+	int value = 0;
+	int objectXPosition = 0;
+	int objectYPosition = 0;
+	int hitRectXPosition = 0;
+	int hitRectYPosition = 0;
+	int hitRectWidth = 0;
+	int hitRectHeight = 0;
+	string textValue = " ";
+	string objectName = " ";
+
 	// ------------------------------------------------------------------------------------------------- Load desired level
-	// Tiles are loaded closer to function further down in document
+	// Tiles are loaded inside the main loop on the first itteration
 
 
 	string levelSpritesheet;
@@ -78,7 +92,7 @@ int main() {
 
 
 	sf::RenderWindow window(sf::VideoMode(1280, 800), "Gears and Brawn", sf::Style::Titlebar | sf::Style::Close);
-	sf::View view(sf::FloatRect(0, 0, 2000, 1500));
+	sf::View view(sf::FloatRect(0, 0, 800, 500));
 
 
 
@@ -128,85 +142,132 @@ int main() {
 
 
 	// ------------------------------------------------------------------------------- 
+	// ------------------------------------------------------------------------------------------------------ Define Vectors containing class objects
 
-	class player Player1;
-	Player1.sprite.setTexture(playerTexture);
-
-
-
-	// Set the players starting position, variables set in level_data.txt
-	Player1.setPos(setPlayerStartPosX, setPlayerStartPosY);
-
-	class conversation Conversation;
-
-
-	// matter array
+	// matter
 	vector<matter>::const_iterator iter;
 	vector<matter> matterArray;
 
-	// matter objects, passed to the function in order is: Width, Height, X, Y of the desired hitBox in relation to the sprite.
-	class matter snowMatter(70, 50, 20, 50);
-
-	// World Array
+	// world
 	vector<world>::const_iterator iter8;
 	vector<world> worldArray;
 
-	// World Object
-    class world tile(300, 300, 0, 0);
-
-	// animatedmatter array
+	// animatedmatter
 	vector<animatedmatter>::const_iterator iter4;
 	vector<animatedmatter> animatedmatterArray;
 
-	// animatedmatter objects
-	class animatedmatter TreeWind;
-
-	// enemy array
+	// enemy
 	vector<enemy>::const_iterator iter3;
 	vector<enemy> enemyArray;
+
+	// enemyHealth
+	vector<int>::const_iterator iter7;
+	vector<int> enemyHealthArray;
+
+	// projectile
+	vector<projectile>::const_iterator iter5;
+	vector<projectile> projectileArray;
+
+	// projectileDirections
+	vector<int>::const_iterator iter6;
+	vector<int> projectileDirectionsArray;
+
+	// ------------------------------------------------------------------------------------------------------ Define objects in classes
+	
+	// player
+	class player Player1;
+	Player1.sprite.setTexture(playerTexture);
+
+	// conversation
+	class conversation Conversation;
+
+	// matter
+	// Passed to the function in order is: (Width, Height, X, Y) of the desired hitBox in relation to the sprite.
+	class matter snowMatter(70, 50, 20, 50);
+	class matter Matter(70, 50, 20, 50);
+
+	// world 
+    class world tile(300, 300, 0, 0);
+
+	// animatedmatter
+	class animatedmatter TreeWind;
 
 	// enemy objects
 	class enemy Enemy;
 
-	// enemy array
-	vector<int>::const_iterator iter7;
-	vector<int> enemyHealthArray;
-
-	// projectile array
-	vector<projectile>::const_iterator iter5;
-	vector<projectile> projectileArray;
-
 	// projectile objects
 	class projectile ProjectileRock;
 
-
-	vector<int>::const_iterator iter6;
-	vector<int> projectileDirectionsArray;
-
-
-	
+	// ---------------------------------------------------------------------------------------------- Set sprites to textures
 	Enemy.sprite.setTexture(enemyTexture);
 	TreeWind.sprite.setTexture(treeWindTexture);
 	ProjectileRock.sprite.setTexture(rockProjectileTexture);
 	snowMatter.sprite.setTexture(snowMatterTexture);
+	Matter.sprite.setTexture(snowMatterTexture);
 	tile.sprite.setTexture(tileTexture);
+	// ----------------------------------------------------------------------------------------------
 
 
-
+	// --------------------------------------------------------------------
+	// Set the players starting position, variables set in level_data.txt
+	Player1.setPos(setPlayerStartPosX, setPlayerStartPosY);
+	// --------------------------------------------------------------------
 
 	// Loopen som håller fönstret öppet
 	while (window.isOpen())
 	{
 
 
-		// ----------------------------------------------------------------------------------------------------------- This is where the content of the vectors is added to the game
+		// ------------------------------------------------------------------------------------ This is where the content of the vectors is added to the game
 		if (firstLoop == true) {
 
+
+			// -------------------------------------- Load matter from file
+			// initialize and open the data file
+			ifstream level_matter;
+			level_matter.open(levelMatterToLoad);
+
+			// Handle error
+			if (level_matter.fail()) {
+				cerr << levelMatterToLoad;
+				exit(1);
+			}
+			// ---------------------------------------------
+
+
+
+			/*
+			counter1 = 0;
+			while (!level_matter.eof()) {
+
+				if (counter1 = 0) {
+					level_matter >> textValue;
+					objectName = textValue;
+				}else if (counter1 != 6){
+					level_matter >> value;
+				}
+
+				if (counter1 = 6) {
+					Matter.sprite.setPosition(objectXPosition, objectXPosition);
+					Matter.sprite.setTextureRect(sf::IntRect(hitRectXPosition, hitRectYPosition, hitRectWidth, hitRectHeight));
+					matterArray.push_back(Matter);
+					counter1 = 0;
+				}
+
+				counter1++;
+			}
+			level_matter.close();
+		
+
+
+			Matter.sprite.setPosition(1300, 3000);
+			Matter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
+			matterArray.push_back(Matter);
+			*/
 
 			snowMatter.sprite.setPosition(400, 400);
 			snowMatter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
 			matterArray.push_back(snowMatter);
-
 
 			snowMatter.sprite.setPosition(400, 534);
 			snowMatter.sprite.setTextureRect(sf::IntRect(100, 0, 100, 100));
@@ -272,7 +333,7 @@ int main() {
 
 
 			
-			// --------------------------------------------------- Load tiles
+			// --------------------------------------------------- Load tiles from file
 
 			// Initialize and open the tiles file
 			ifstream level_tiles;
@@ -286,13 +347,13 @@ int main() {
 
 
 
-			//------------------------------------------------------------------------------------------------------------------------------------------------------ Building the tiles
+			//--------------------------------------------------------------------------------------------------------------------- Building the tiles
 
 			// Set map array to correct tiles based on information from the level_data file.
 			counter1 = 0;
-			int lastValueX = 0;
-			int lastValueY = 0;
-			int value;
+			float lastValueX = 0;
+			float lastValueY = 0;
+
 			while (!level_tiles.eof())
 
 			{
@@ -404,10 +465,10 @@ int main() {
 			if (Player1.hitRect.getGlobalBounds().intersects(worldArray[counter1].hitRect.getGlobalBounds()))
 			{
 				if (worldArray[counter1].tileIsWalkable() == false) {
-					float direction1 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
-					float direction2 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
-					float direction3 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
-					float direction4 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+					int direction1 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+					int direction2 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+					int direction3 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+					int direction4 = worldArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
 					Player1.collision(direction1, direction2, direction3, direction4);
 					//std::cout << direction1 << " | " << direction2 << " | " << direction3 << " | " << direction4 << " | " << endl;					
 				}
@@ -437,10 +498,10 @@ int main() {
 			// Check if player is colliding with objects from the matterArray.
 			if (Player1.hitRect.getGlobalBounds().intersects(matterArray[counter1].hitRect.getGlobalBounds()))
 			{
-				float direction1 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
-				float direction2 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
-				float direction3 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
-				float direction4 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+				int direction1 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+				int direction2 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+				int direction3 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+				int direction4 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
 				Player1.collision(direction1, direction2, direction3, direction4);
 			}
 

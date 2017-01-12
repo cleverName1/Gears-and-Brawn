@@ -18,7 +18,7 @@ public:
 
 
 	entity();
-	float * collision(float playerX, float playerY, float playerWidth, float playerHeight);
+	int * collision(float playerX, float playerY, float playerWidth, float playerHeight);
 
 	~entity();
 };

@@ -14,15 +14,15 @@ public:
 	int animationCounter = 0;
 	int attackDamage = 3;
 	int health = 4;
-	double speedX = 0;
-	double speedY = 0;
-	int direction = 9;
+	float speedX = 0;
+	float speedY = 0;
+	float direction = 9;
 	int lastMovement = 0;
 
 	sf::Sprite sprite;
 
 	enemy();
-	void update(int time);
+	void update(float time);
 	int getHealth();
 
 	~enemy();

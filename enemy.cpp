@@ -17,7 +17,7 @@ int enemy::getHealth() {
 	return this->health;
 }
 
-void enemy::update(int time)
+void enemy::update(float time)
 {
 	hitRect.setPosition(sf::Vector2f(sprite.getPosition().x + 10, sprite.getPosition().y + 10));
 	// 0 = Above, 1 = Below, 2 = Right, 4 = Left 
@@ -45,7 +45,7 @@ void enemy::update(int time)
 	}
 
 
-	int lastMovement = time;
+	float lastMovement = time;
 	// Move enemy
 	sprite.move(sf::Vector2f(speedX, speedY));
 }

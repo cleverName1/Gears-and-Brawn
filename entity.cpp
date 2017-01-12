@@ -7,14 +7,14 @@ entity::entity()
 }
 
 
-float * entity::collision(float playerX, float playerY, float playerWidth, float playerHeight)
+int * entity::collision(float playerX, float playerY, float playerWidth, float playerHeight)
 {
 	float objectWidth = hitRect.getGlobalBounds().width;
 	float objectHeight = hitRect.getGlobalBounds().height;
 	float objectX = hitRect.getPosition().x;
 	float objectY = hitRect.getPosition().y;
 
-	float directions[4] = { 0, 0, 0, 0 };
+	int directions[4] = { 0, 0, 0, 0 };
 //	std::cout << objectWidth << " | " << objectHeight << " | " << objectX << " | " << objectY << " | OBJECT " << endl;
 //	std::cout << playerWidth << " | " << playerHeight << " | " << playerX << " | " << playerY << " | PLAYER " << endl;
 
