@@ -60,24 +60,25 @@ void player::update()
 
 
 	// Set max speeds
-	if (speedX > 2)
+	if (speedX > maxSpeed)
 	{
-		speedX = 2;
+		speedX = maxSpeed;
 	}
 
-	if (speedX < -2)
+	if (speedX < -maxSpeed)
 	{
-		speedX = -2;
+		speedX = -maxSpeed;
 	}
-	if (speedY > 2)
+	if (speedY > maxSpeed)
 	{
-		speedY = 2;
+		speedY = maxSpeed;
 	}
 
-	if (speedY < -2)
+	if (speedY < -maxSpeed)
 	{
-		speedY = -2;
+		speedY = -maxSpeed;
 	}
+	maxSpeed = maxSpeedReset;
 
 	// Move player
 	sprite.move(sf::Vector2f(speedX, speedY));
@@ -194,6 +195,13 @@ void player::setPos(float setPosX, float setPosY) {
 	sprite.setPosition(setPosX, setPosY);
 }
 
+
+void player::specialMovement(int type) {
+
+	maxSpeed = sprintSpeed;;
+	speedX * 99;
+	speedY * 99;
+}
 
 // Destructor
 player::~player()

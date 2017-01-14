@@ -7,6 +7,7 @@ using namespace std;
 class entity
 {
 public:
+	sf::CircleShape hitCirc;
 	sf::RectangleShape hitRect;
 	sf::Sprite sprite;
 	float playerX = 0;
@@ -15,6 +16,7 @@ public:
 	float playerWidth = 0;
 	double speedX = 0;
 	double speedY = 0;
+	int shape;
 
 
 	entity();

@@ -22,6 +22,10 @@ public:
 	int direction3 = 0;
 	int direction4 = 0;
 	int facingDir = 1;
+	int maxSpeedReset = 2;
+	int maxSpeed = maxSpeedReset;
+	int sprintSpeed = 4;
+
 
 	sf::Sprite sprite;
 
@@ -31,6 +35,7 @@ public:
 	int facingDirection();
 	void collision(int direction1, int direction2, int direction3, int direction4);
 	void setPos(float setPosX, float setPosY);
+	void specialMovement(int type);
 
 	~player();
 };

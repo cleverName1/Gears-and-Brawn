@@ -26,6 +26,15 @@ void world::update(float hitboxX, float hitboxY)
 	hitRect.setPosition(sf::Vector2f(hitboxX + hitboxX2, hitboxY + hitboxY2));
 }
 
+void world::setTileNumber(int value) {
+	tileNumber = value;
+
+}
+
+int world::getTileNumber() {
+	return tileNumber;
+
+}
 
 
 world::~world()

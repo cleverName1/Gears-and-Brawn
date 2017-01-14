@@ -31,14 +31,12 @@ int main() {
 
 	// Used when reading from files
 	int value = 0;
-	int objectXPosition = 0;
-	int objectYPosition = 0;
-	int hitRectXPosition = 0;
-	int hitRectYPosition = 0;
-	int hitRectWidth = 0;
-	int hitRectHeight = 0;
-	string textValue = " ";
+	float objectXPosition = 0;
+	float objectYPosition = 0;
 	string objectName = " ";
+	// matter
+	vector<int>::const_iterator iter9;
+	vector<int> sometimesWalkableArray;
 
 	// ------------------------------------------------------------------------------------------------- Load desired level
 	// Tiles are loaded inside the main loop on the first itteration
@@ -48,6 +46,7 @@ int main() {
 	float setPlayerStartPosX;
 	float setPlayerStartPosY;
 	int mapWidth;
+	int sometimesWalkable;
 
 	// --------------------------------------------------- Load data
 
@@ -63,6 +62,20 @@ int main() {
 
 	// Set level variables
 	level_data >> levelSpritesheet >> setPlayerStartPosX >> setPlayerStartPosY >> mapWidth;
+
+
+
+	while (!level_data.eof()) {
+		level_data >> sometimesWalkable;
+		sometimesWalkableArray.push_back(sometimesWalkable);
+	}
+
+
+
+	
+
+
+
 
 	// -------------------------------------------------------------------------------------------------------------------------
 
@@ -133,6 +146,19 @@ int main() {
 		std::cout << "images/rock_projectile.png failed to load. /n";
 	}
 
+	sf::Texture forestTreeTexture;
+	if (!forestTreeTexture.loadFromFile("images/forest_tree.png"))
+	{
+		std::cout << "images/forest_tree.png failed to load. /n";
+	}
+
+	sf::Texture forestTexture;
+	if (!forestTexture.loadFromFile("images/forest.png"))
+	{
+		std::cout << "images/forest.png failed to load. /n";
+	}
+
+
 	sf::Texture tileTexture;
 	if (!tileTexture.loadFromFile(levelSpritesheet))
 	{
@@ -182,9 +208,12 @@ int main() {
 	class conversation Conversation;
 
 	// matter
-	// Passed to the function in order is: (Width, Height, X, Y) of the desired hitBox in relation to the sprite.
-	class matter snowMatter(70, 50, 20, 50);
-	class matter Matter(70, 50, 20, 50);
+	// Passed to the function in order is: (Width, Height, X, Y, 1 = rectangular, 2 = circular) of the desired hitBox in relation to the sprite.
+	// When circular the width is used to define the radius and height becomes superfluous.
+	class matter snowMatter(80, 50, 10, 50, 1);
+	class matter forestTree(120, 120, 35, 35, 1);
+	class matter forest(796, 726, 0, 0, 1);
+	//class matter forestTree(70, 0, 25, 30, 2);
 
 	// world 
     class world tile(300, 300, 0, 0);
@@ -203,7 +232,8 @@ int main() {
 	TreeWind.sprite.setTexture(treeWindTexture);
 	ProjectileRock.sprite.setTexture(rockProjectileTexture);
 	snowMatter.sprite.setTexture(snowMatterTexture);
-	Matter.sprite.setTexture(snowMatterTexture);
+	forestTree.sprite.setTexture(forestTreeTexture);
+	forest.sprite.setTexture(forestTexture);
 	tile.sprite.setTexture(tileTexture);
 	// ----------------------------------------------------------------------------------------------
 
@@ -234,101 +264,166 @@ int main() {
 			}
 			// ---------------------------------------------
 
-
-
-			/*
+			
 			counter1 = 0;
+			counter2 = 0;
+			counter3 = 0;
 			while (!level_matter.eof()) {
 
-				if (counter1 = 0) {
-					level_matter >> textValue;
-					objectName = textValue;
-				}else if (counter1 != 6){
-					level_matter >> value;
+				if (counter1 == 0) {
+					level_matter >> objectName;
 				}
+				
+				if (counter1 == 1){
+					level_matter >> objectXPosition;
+				}
+				
+				if (counter1 == 2) {
+					level_matter >> objectYPosition;
 
-				if (counter1 = 6) {
-					Matter.sprite.setPosition(objectXPosition, objectXPosition);
-					Matter.sprite.setTextureRect(sf::IntRect(hitRectXPosition, hitRectYPosition, hitRectWidth, hitRectHeight));
-					matterArray.push_back(Matter);
+					// All matter in the game needs to be defined here if it is to be read from the level_matter.txt file.
+
+					if (objectName == "SnowyRock1") {
+
+						snowMatter.sprite.setPosition(objectXPosition, objectYPosition);
+						snowMatter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
+						matterArray.push_back(snowMatter);
+					}
+
+					else if (objectName == "SnowyRock2") {
+
+						snowMatter.sprite.setPosition(objectXPosition, objectYPosition);
+						snowMatter.sprite.setTextureRect(sf::IntRect(100, 0, 100, 100));
+						matterArray.push_back(snowMatter);
+					}
+
+					else if (objectName == "WindyTree1") {
+
+						TreeWind.sprite.setPosition(objectXPosition, objectYPosition);
+						TreeWind.update();
+						animatedmatterArray.push_back(TreeWind);
+					}
+
+					else if (objectName == "ForestTree1") {
+
+						forestTree.sprite.setPosition(objectXPosition, objectYPosition);
+						snowMatter.sprite.setTextureRect(sf::IntRect(0, 0, 190, 190));
+						matterArray.push_back(forestTree);
+					}
+
+					else if (objectName == "Forest1") {
+
+						forest.sprite.setPosition(objectXPosition, objectYPosition);
+						forest.sprite.setTextureRect(sf::IntRect(0, 0, 796, 726));
+						matterArray.push_back(forest);
+					}
+
+					else {
+
+						std::cout << "Object name on line " << counter2 - 2 << " is not defined in the while loop \n";
+					}
+
+
 					counter1 = 0;
+					continue;
 				}
 
+
+				// These counters keep track of the current line so that its easy to find mistakes.
 				counter1++;
+				counter2++;
+				counter3++;
+				if (counter3 == 2) {
+					counter2++;
+					counter3 = 0;
+				}
+
+
 			}
 			level_matter.close();
 		
+			//------------------------------------------------------------------------------------------------------------- MATTER LOAD END
+			// ------------------------------------------------------------------------------------------------------------ ENEMY LOAD START
 
 
-			Matter.sprite.setPosition(1300, 3000);
-			Matter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
-			matterArray.push_back(Matter);
-			*/
+			// -------------------------------------- Load enemy from file
+			// initialize and open the data file
+			ifstream level_enemy;
+			level_enemy.open(levelEnemiesToLoad);
 
-			snowMatter.sprite.setPosition(400, 400);
-			snowMatter.sprite.setTextureRect(sf::IntRect(0, 0, 100, 100));
-			matterArray.push_back(snowMatter);
-
-			snowMatter.sprite.setPosition(400, 534);
-			snowMatter.sprite.setTextureRect(sf::IntRect(100, 0, 100, 100));
-			matterArray.push_back(snowMatter);
-
-			Enemy.sprite.setPosition(325, 725);
-			enemyArray.push_back(Enemy);
-			enemyHealthArray.push_back(Enemy.getHealth());
+			// Handle error
+			if (level_enemy.fail()) {
+				cerr << levelEnemiesToLoad;
+				exit(1);
+			}
+			// ---------------------------------------------
 
 
-			/*
-			TreeWind.sprite.setPosition(0, 0);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+			counter1 = 0;
+			counter2 = 0;
+			counter3 = 0;
+			while (!level_enemy.eof()) {
 
-			TreeWind.sprite.setPosition(130, 20);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+				if (counter1 == 0) {
+					level_enemy >> objectName;
+				}
 
-			TreeWind.sprite.setPosition(400, 34);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+				if (counter1 == 1) {
+					level_enemy >> objectXPosition;
+				}
 
-			TreeWind.sprite.setPosition(345, 56);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+				if (counter1 == 2) {
+					level_enemy >> objectYPosition;
 
-			TreeWind.sprite.setPosition(123, 76);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					// All enemies in the game needs to be defined here if it is to be read from the level_enemies.txt file.
 
-			TreeWind.sprite.setPosition(346, 234);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					if (objectName == "enemy1") {
 
-			TreeWind.sprite.setPosition(234, 545);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+						Enemy.sprite.setPosition(objectXPosition, objectYPosition);
+						enemyArray.push_back(Enemy);
+						enemyHealthArray.push_back(Enemy.getHealth());
 
-			TreeWind.sprite.setPosition(454, 345);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					}
 
-			TreeWind.sprite.setPosition(124, 657);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					else if (objectName == "enemy2") {
 
-			TreeWind.sprite.setPosition(67, 63);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+						Enemy.sprite.setPosition(objectXPosition, objectYPosition);
+						enemyArray.push_back(Enemy);
+						enemyHealthArray.push_back(Enemy.getHealth());
 
-			TreeWind.sprite.setPosition(47, 453);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					}
 
-			TreeWind.sprite.setPosition(17, 233);
-			TreeWind.update();
-			animatedmatterArray.push_back(TreeWind);
+					else {
+
+						std::cout << "Enemy name on line " << counter2 - 2 << " is not defined in the while loop \n";
+					}
 
 
-			*/
+					counter1 = 0;
+					continue;
+				}
+
+
+				// These counters keep track of the current line so that its easy to find mistakes.
+				counter1++;
+				counter2++;
+				counter3++;
+				if (counter3 == 2) {
+					counter2++;
+					counter3 = 0;
+				}
+
+
+			}
+			level_enemy.close();
+
+			// ------------------------------------------------------------------------------------------------------------ ENEMY LOAD END
+	
+
+
+
+
+
 
 
 
@@ -368,6 +463,10 @@ int main() {
 				if (value == 1 || value == 2 || value == 3 || value == 4 || value == 5 || value == 6 || value == 7 || value == 8) {
 					tile.setTileIsWalkable(false);
 				}
+
+				tile.setTileNumber(value);
+
+
 				worldArray.push_back(tile);
 
 
@@ -386,7 +485,7 @@ int main() {
 
 
 
-			//------------------------------------------------------------------------------------------------------------------------------------------------------
+			//----------------------------------------------------------------------------------------------------------------------------------------
 	
 	
 
@@ -442,6 +541,7 @@ int main() {
 
 
 
+
 		window.clear();
 
 
@@ -450,8 +550,35 @@ int main() {
 		counter1 = 0;
 		for (iter8 = worldArray.begin(); iter8 != worldArray.end(); iter8++)
 		{
-			worldArray[counter1].update(worldArray[counter1].sprite.getPosition().x, worldArray[counter1].sprite.getPosition().y);
 
+
+				//std::cout << sometimesWalkableArray[1] << endl;
+
+			counter2 = 0;
+				// We check every member of the sometimesWalkableArray, that contains the numbers of all walkable tiles provided by the data_file.
+				for (iter9 = sometimesWalkableArray.begin(); iter9 != sometimesWalkableArray.end(); iter9++) {
+
+					// This part is for changing the walkability setting on tiles from the worldArray.
+					
+						// If the tile number of this tile corresponds to the number of the array, we make the tile walkable.
+						if (worldArray[counter1].getTileNumber() == sometimesWalkableArray[counter2]) 
+							if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+							worldArray[counter1].setTileIsWalkable(true);
+
+							// Was working here with getting the if statements right. ****************************************************************************************************************************************************************************************************
+							} else if (Player1.hitRect.getGlobalBounds().intersects(worldArray[counter1].hitRect.getGlobalBounds()) && worldArray[counter1].tileIsWalkable() == true) {
+								worldArray[counter1].setTileIsWalkable(true);
+							} else {
+								worldArray[counter1].setTileIsWalkable(false);
+							}
+						
+											
+					counter2++;
+		    	}				
+
+
+			// Get sprite position from the worldArray and draw the tile.
+			worldArray[counter1].update(worldArray[counter1].sprite.getPosition().x, worldArray[counter1].sprite.getPosition().y);
 			window.draw(worldArray[counter1].sprite);
 			counter1++;
 		}
@@ -485,8 +612,18 @@ int main() {
 		counter1 = 0;
 		for (iter = matterArray.begin(); iter != matterArray.end(); iter++)
 		{
+			matterArray[counter1].hitRect.setFillColor(sf::Color::Red);
+			matterArray[counter1].hitCirc.setFillColor(sf::Color::Blue);
+
+
 			matterArray[counter1].update(matterArray[counter1].sprite.getPosition().x, matterArray[counter1].sprite.getPosition().y);
 			window.draw(matterArray[counter1].sprite);
+
+			// For locating the hitbox, WORKTOOL
+			//window.draw(matterArray[counter1].hitRect);
+			//window.draw(matterArray[counter1].hitCirc);
+
+
 			counter1++;
 		}
 
@@ -495,18 +632,43 @@ int main() {
 		counter1 = 0;
 		for (iter = matterArray.begin(); iter != matterArray.end(); iter++)
 		{
-			// Check if player is colliding with objects from the matterArray.
-			if (Player1.hitRect.getGlobalBounds().intersects(matterArray[counter1].hitRect.getGlobalBounds()))
-			{
-				int direction1 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
-				int direction2 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
-				int direction3 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
-				int direction4 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
-				Player1.collision(direction1, direction2, direction3, direction4);
+
+			// 1 = Rectangular shape
+			if (matterArray[counter1].getShape() == 1) {
+				if (Player1.hitRect.getGlobalBounds().intersects(matterArray[counter1].hitRect.getGlobalBounds()))
+				{
+					int direction1 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[0];
+					int direction2 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[1];
+					int direction3 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[2];
+					int direction4 = matterArray[counter1].collision(playerX, playerY, playerWidth, playerHeight)[3];
+					Player1.collision(direction1, direction2, direction3, direction4);
+				}
 			}
 
+
+			// 2 = Circular shape
+			if (matterArray[counter1].getShape() == 2) {
+				if (Player1.hitRect.getGlobalBounds().intersects(matterArray[counter1].hitCirc.getGlobalBounds()))
+				{
+
+					// Collision detection with circle does not exist yet.
+					
+					/*
+					int direction1 = 1;
+					int direction2 = 0;
+					int direction3 = 0;
+					int direction4 = 0;
+
+					Player1.collision(direction1, direction2, direction3, direction4);
+					*/
+				}
+			}
+
+			// Check if player is colliding with objects from the matterArray.
+
+
 			counter2 = 0;
-			// Cycle through the projectileArray for each piece if matter.
+			// Cycle through the projectileArray for each piece of matter.
 			for (iter5 = projectileArray.begin(); iter5 != projectileArray.end(); iter5++)
 			{
 				// If a member of projectileArray intersects a member of matterArray
@@ -574,7 +736,6 @@ int main() {
 					{
 						// Check if the enemy is defeated or not (health = 0)
 						if (enemyHealthArray[counter1] <= 0) {
-						
 
 							if (conversationActive == true) {
 								if (sf::Keyboard::isKeyPressed(sf::Keyboard::Escape) || sf::Keyboard::isKeyPressed(sf::Keyboard::X)) {
@@ -774,7 +935,10 @@ int main() {
 			sixSecondClock.restart();
 		}
 
-
+		// Use jetpack with Lshift
+		if (sf::Keyboard::isKeyPressed(sf::Keyboard::LShift)) {
+			Player1.specialMovement(1);
+		}
 
 		// Update player
 		Player1.update();

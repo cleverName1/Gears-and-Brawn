@@ -1,7 +1,6 @@
 #include "entity.h"
 
 
-
 entity::entity()
 {
 }
@@ -13,6 +12,7 @@ int * entity::collision(float playerX, float playerY, float playerWidth, float p
 	float objectHeight = hitRect.getGlobalBounds().height;
 	float objectX = hitRect.getPosition().x;
 	float objectY = hitRect.getPosition().y;
+
 
 	int directions[4] = { 0, 0, 0, 0 };
 //	std::cout << objectWidth << " | " << objectHeight << " | " << objectX << " | " << objectY << " | OBJECT " << endl;
@@ -58,6 +58,9 @@ int * entity::collision(float playerX, float playerY, float playerWidth, float p
 
 
 }
+
+
+
 
 
 entity::~entity()
